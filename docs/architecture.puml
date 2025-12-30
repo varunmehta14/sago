@@ -1,0 +1,96 @@
+@startuml Sago System Architecture
+
+!define RECTANGLE class
+
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle rectangle
+
+title Sago Pitch Deck Analyzer - System Architecture
+
+' User Interfaces
+package "User Interfaces" {
+    [Web Interface\n(Next.js + React)] as WebUI
+    [Gmail Integration\n(Google Apps Script)] as Gmail
+}
+
+' Backend Services
+package "Backend API\n(FastAPI + Python)" {
+    [Upload Endpoint\n/api/pitch-deck/upload] as Upload
+    [Analysis Endpoint\n/api/pitch-deck/analyze-with-agents] as Analyze
+    [Email Webhook\n/api/email/webhook] as EmailWebhook
+
+    package "Core Services" {
+        [PDF Parser\n(PyPDF2)] as PDFParser
+        [LangGraph Multi-Agent\nOrchestrator] as LangGraph
+        [Email Service\n(Gmail SMTP)] as EmailService
+    }
+}
+
+' Multi-Agent System
+package "AI Agent Workflow\n(LangGraph)" {
+    [Claim Extractor\nAgent] as Agent1
+    [Research Agent\n(Web Search)] as Agent2
+    [Verification Agent] as Agent3
+    [Question Generator\nAgent] as Agent4
+}
+
+' External Services
+cloud "External APIs" {
+    [Google Gemini API\n(gemini-2.5-flash-lite)] as Gemini
+    [DuckDuckGo\nSearch API] as DuckDuckGo
+    [Gmail SMTP\nServer] as SMTP
+}
+
+' Storage
+database "File Storage" {
+    folder "uploads/" as Storage
+}
+
+' User Flows
+WebUI --> Upload : 1. Upload PDF
+Upload --> PDFParser : 2. Extract text
+PDFParser --> Storage : 3. Save PDF
+Upload --> Analyze : 4. Trigger analysis
+
+Analyze --> LangGraph : 5. Start workflow
+LangGraph --> Agent1 : 6. Extract claims
+Agent1 --> Gemini : 7. LLM processing
+Agent1 --> Agent2 : 8. Top 3 claims
+
+Agent2 --> DuckDuckGo : 9. Web search
+Agent2 --> Agent3 : 10. Research results
+
+Agent3 --> Gemini : 11. Verify claims
+Agent3 --> Agent4 : 12. Verified data
+
+Agent4 --> Gemini : 13. Generate questions
+Agent4 --> Analyze : 14. Return results
+Analyze --> WebUI : 15. Display analysis
+
+' Email Flow
+Gmail --> EmailWebhook : Email with PDF\n+ "hey sago"
+EmailWebhook --> PDFParser : Parse PDF
+EmailWebhook --> LangGraph : Analyze
+LangGraph --> EmailService : Results
+EmailService --> SMTP : Send formatted email
+SMTP --> Gmail : Analysis reply
+
+note right of LangGraph
+  Multi-Agent Workflow:
+  1. Claim Extractor (27 claims)
+  2. Research Agent (top 3)
+  3. Verification Agent
+  4. Question Generator (12 questions)
+end note
+
+note right of Gmail
+  Trigger Phrases:
+  - "hey sago"
+  - "sago analyze"
+  - "analyze this pitch deck"
+
+  Runs every 5 minutes
+  Auto-labels: "Sago/Analyzed"
+end note
+
+@enduml

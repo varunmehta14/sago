@@ -1,0 +1,96 @@
+@startuml Multi-Agent Workflow
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+
+title Sago Multi-Agent Verification Workflow (LangGraph)
+
+actor User
+participant "Upload API" as Upload
+participant "LangGraph\nOrchestrator" as Graph
+participant "Agent 1:\nClaim Extractor" as Agent1
+participant "Agent 2:\nResearch Agent" as Agent2
+participant "Agent 3:\nVerification Agent" as Agent3
+participant "Agent 4:\nQuestion Generator" as Agent4
+participant "Google Gemini\nAPI" as Gemini
+participant "DuckDuckGo\nSearch" as Search
+
+User -> Upload: Upload pitch deck PDF
+Upload -> Upload: Extract text with PyPDF2
+
+Upload -> Graph: Start analysis workflow
+activate Graph
+
+== Stage 1: Claim Extraction ==
+Graph -> Agent1: Extract claims from pitch deck
+activate Agent1
+Agent1 -> Gemini: Prompt: "Extract quantifiable claims\nwith importance scores"
+Gemini --> Agent1: Returns claims as JSON
+Agent1 --> Graph: 27 claims extracted\n(sorted by importance)
+deactivate Agent1
+
+note right of Agent1
+  Output format:
+  {
+    "claim": "...",
+    "importance": 9,
+    "category": "market_size"
+  }
+end note
+
+== Stage 2: Research Top Claims ==
+Graph -> Agent2: Research top 3 high-importance claims
+activate Agent2
+loop For each of top 3 claims
+    Agent2 -> Search: Search: "[claim] site:.com OR site:.org"
+    Search --> Agent2: Web search results (snippets)
+end
+Agent2 --> Graph: Research data for 3 claims
+deactivate Agent2
+
+note right of Agent2
+  Rate limit optimization:
+  - Only research top 3 claims
+  - Uses DuckDuckGo (free, no API key)
+  - Searches authoritative sources
+end note
+
+== Stage 3: Verification ==
+Graph -> Agent3: Verify claims with research data
+activate Agent3
+loop For each researched claim
+    Agent3 -> Gemini: Prompt: "Verify this claim using\nthe following research:\n[research_data]"
+    Gemini --> Agent3: Verification result
+end
+Agent3 --> Graph: 3 verified claims with results
+deactivate Agent3
+
+note right of Agent3
+  Verification includes:
+  - Fact-checking against research
+  - Identifying contradictions
+  - Assessing credibility
+end note
+
+== Stage 4: Question Generation ==
+Graph -> Agent4: Generate due diligence questions
+activate Agent4
+Agent4 -> Gemini: Prompt: "Generate questions based on:\n- Claims\n- Verifications\n- Gaps in information"
+Gemini --> Agent4: List of questions
+Agent4 --> Graph: 12 due diligence questions
+deactivate Agent4
+
+Graph --> Upload: Final results:\n- Company name\n- 27 claims extracted\n- 3 verified claims\n- 12 questions
+deactivate Graph
+
+Upload --> User: Display analysis on web UI\nOR send via email
+
+note over Graph
+  **Total Processing Time:** ~45-60 seconds
+  **Gemini API calls:** ~32 calls
+  **Web searches:** 3 searches
+
+  **Cost:** $0 (free tier)
+end note
+
+@enduml

@@ -1,17 +1,53 @@
-# Sago Pitch Deck Analyzer
+# 🚀 Sago Pitch Deck Analyzer
 
 AI-powered pitch deck verification and question generation system for investors.
+
+> **"Seamless Integration, Hyper-Personalization, True Agency"**
+
+## 📺 Demo Videos
+
+### Web Interface Demo
+https://github.com/varunmehta14/sago/blob/main/Sago-website.mov
+
+Watch the web interface in action: Upload a pitch deck PDF, run multi-agent analysis, and get instant verification results with personalized questions.
+
+### Gmail Integration Demo
+https://github.com/varunmehta14/sago/blob/main/Sago-email.mov
+
+See the Gmail integration: Send "Hey Sago, analyze this pitch deck" with a PDF attachment, and receive a beautifully formatted analysis email automatically.
 
 ## Overview
 
 This application implements **Use Case 2** from the Sago assignment: An investor receives a pitch deck in PDF and wants to verify the information and generate personalized questions to ask the founder.
 
+### ✨ Key Features
+
+✅ **Two Analysis Interfaces:**
+- **Web App** (Next.js + React) - Manual upload and analysis
+- **Gmail Integration** (Google Apps Script) - Automatic email-based analysis
+
+✅ **Multi-Agent AI System:**
+- 4 specialized agents working together (LangGraph)
+- Real-time web search for claim verification
+- Evidence-based verification with sources
+
+✅ **Seamless Workflow:**
+- No new apps to download
+- Works with existing Gmail workflow
+- Trigger-based analysis ("hey sago" activates the system)
+
+✅ **Beautiful Results:**
+- Professional HTML email formatting
+- Detailed verification results
+- Personalized investor questions
+
 ### Design Principles
 
 #### 1. Seamless Integration
-- Web-based interface accessible from any browser
-- Simple drag-and-drop PDF upload
-- Can be integrated with existing tools (Gmail, Drive, Slack) via webhooks or browser extensions
+- **Web-based interface** accessible from any browser
+- **Gmail integration** - Email "hey sago" with PDF attachment → get automated analysis
+- **Google Apps Script** - Runs every 5 minutes, monitors Gmail automatically
+- **No new apps to download** - Works with existing workflow
 
 #### 2. Hyper-Personalization
 - Analyzes specific claims from each unique pitch deck
@@ -47,24 +83,60 @@ Agent 3: Verification Agent → Agent 4: Question Generator
 
 For details, see **[LANGGRAPH_AGENTS.md](LANGGRAPH_AGENTS.md)**
 
+## 📧 Gmail Integration (Seamless Integration)
+
+Sago integrates directly with your Gmail inbox - **no new apps needed!**
+
+### How It Works
+
+1. **Send email** to your Gmail account (e.g., collegePracticals118@gmail.com)
+2. **Write trigger phrase** in email body: "Hey Sago, analyze this pitch deck"
+3. **Attach** pitch deck PDF
+4. **Wait ~5 minutes** - Google Apps Script runs automatically
+5. **Receive analysis** as a reply email with beautiful formatting
+
+### Features
+
+- ✅ **Automatic monitoring** - Script checks Gmail every 5 minutes
+- ✅ **Trigger-based** - Only processes emails with "hey sago" phrases
+- ✅ **Auto-labeling** - Processed emails labeled as "Sago/Analyzed"
+- ✅ **No duplicates** - Each email analyzed only once
+- ✅ **Beautiful emails** - Professional HTML formatting with colored summaries
+
+### Setup
+
+See **[GOOGLE_APPS_SCRIPT_SETUP.md](GOOGLE_APPS_SCRIPT_SETUP.md)** for complete instructions.
+
+**Quick Start:**
+1. Go to https://script.google.com
+2. Copy code from `google-apps-script/Code.gs`
+3. Set up 5-minute trigger
+4. Done! 🎉
+
 ## Architecture
 
 ### Tech Stack
 
 **Backend:**
 - FastAPI (Python 3.11)
-- Google Gemini API (Free tier)
+- Google Gemini API (Free tier - gemini-2.5-flash-lite)
 - **LangGraph** for multi-agent orchestration
 - **LangChain** for agent tools and utilities
 - PyPDF2 for PDF parsing
 - Pydantic for data validation
 - DuckDuckGo Search (no API key needed)
+- **Gmail SMTP** for sending analysis emails
 
 **Frontend:**
 - Next.js 16 (App Router)
 - React 19
 - TypeScript
 - Tailwind CSS
+
+**Integration Layer:**
+- **Google Apps Script** - Gmail monitoring
+- **Localtunnel** - Public URL for local development
+- Gmail API - Email reading and labeling
 
 ### System Flow
 
