@@ -16,6 +16,27 @@ https://github.com/varunmehta14/sago/blob/main/Sago-email.mov
 
 See the Gmail integration: Send "Hey Sago, analyze this pitch deck" with a PDF attachment, and receive a beautifully formatted analysis email automatically.
 
+## 📐 System Architecture
+
+### High-Level Architecture
+![System Architecture](https://raw.githubusercontent.com/varunmehta14/sago/main/docs/architecture.png)
+
+The system consists of three main layers:
+- **User Interfaces** (Web + Gmail)
+- **Backend API** (FastAPI + Multi-Agent System)
+- **External Services** (Gemini AI + DuckDuckGo Search)
+
+### Multi-Agent Workflow
+![Multi-Agent Workflow](https://raw.githubusercontent.com/varunmehta14/sago/main/docs/multi-agent-workflow.png)
+
+The LangGraph orchestrator coordinates 4 specialized AI agents:
+1. **Claim Extractor** - Extracts 27 claims from pitch deck
+2. **Research Agent** - Searches web for top 3 claims
+3. **Verification Agent** - Verifies claims with research data
+4. **Question Generator** - Generates 12 investor questions
+
+**Processing Time:** ~60 seconds | **Cost:** $0 (free tier)
+
 ## Overview
 
 This application implements **Use Case 2** from the Sago assignment: An investor receives a pitch deck in PDF and wants to verify the information and generate personalized questions to ask the founder.
@@ -89,7 +110,7 @@ Sago integrates directly with your Gmail inbox - **no new apps needed!**
 
 ### How It Works
 
-1. **Send email** to your Gmail account (e.g., collegePracticals118@gmail.com)
+1. **Send email** to your Gmail account
 2. **Write trigger phrase** in email body: "Hey Sago, analyze this pitch deck"
 3. **Attach** pitch deck PDF
 4. **Wait ~5 minutes** - Google Apps Script runs automatically
