@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import pitch_deck
+from app.routes import pitch_deck, email_webhook
 
 app = FastAPI(
     title="Sago Pitch Deck Analyzer",
@@ -19,6 +19,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(pitch_deck.router)
+app.include_router(email_webhook.router)
 
 
 @app.get("/")
